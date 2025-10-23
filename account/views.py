@@ -1,3 +1,4 @@
+from django.contrib.auth.views import LogoutView, LoginView
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, logout, login
@@ -6,7 +7,7 @@ from account.forms import LoginForm
 
 @login_required
 def dashboard(request):
-    return render(request, 'account/dashboard.html', {'section':'dashboard'})
+    return render(request, 'account/dashboard.html', {'section':'dashboard', 'title':'Главная страница'})
 
 def user_login(request):
     if request.method == 'POST':
