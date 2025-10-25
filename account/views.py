@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
-from account.forms import LoginForm
+from account.forms import LoginForm, UserRegistrationForm
 
 @login_required
 def dashboard(request):
@@ -33,3 +33,25 @@ def user_login(request):
         'title': 'Вход в аккаунт',
     }
     return render(request, 'account/login.html', context=context)
+
+def register(request):
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST)
+        if user_form.is_valid():
+            new_user = user_form.save(commit=False)
+            new_user.set_password(user_form.cleaned_data['password'])  # Исправлено: password
+            new_user.save()
+
+            context = {
+                'new_user': new_user,
+                'title': f'Добро пожаловать {new_user.first_name}'  # Исправлено: убрана лишняя буква
+            }
+            return render(request, 'account/registration/register_done.html', context)
+    else:
+        user_form = UserRegistrationForm()
+
+    context = {
+        'user_form': user_form,
+        'title': 'Регистрация'  # Исправлено: убрана лишняя буква
+    }
+    return render(request, 'account/registration/register.html', context)
