@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
@@ -8,36 +8,36 @@
 </head>
 <body>
     <div id="header">
-        <span class="logo">Bookmarks</span>
- {% if request.user.is_authenticated %}
+        <span class="logo">Закладки</span>
+     {% if request.user.is_authenticated %}
       <ul class="menu">
         <li {% if section == "dashboard" %}class="selected"{% endif %}>
-          <a href="{% url "dashboard" %}">My dashboard</a>
+          <a href="{% url "dashboard" %}">Моя панель</a>
         </li>
         <li {% if section == "images" %}class="selected"{% endif %}>
-          <a href="#">Images</a>
+          <a href="#">Изображения</a>
         </li>
         <li {% if section == "people" %}class="selected"{% endif %}>
-          <a href="#">People</a>
+          <a href="#">Люди</a>
         </li>
       </ul>
     {% endif %}
     <span class="user">
       {% if request.user.is_authenticated %}
-        Hello {{ request.user.first_name|default:request.user.username }},
-            <form method="post" action="{% url 'logout' %}" style="display: inline;">
-      {% csrf_token %}
-      <button type="submit" style="background: none; border: none; padding: 0; cursor: pointer; color: inherit; font: inherit;">
-        Logout
-      </button>
-    </form>
+        Здравствуйте, {{ request.user.first_name|default:request.user.username }},
+        <form method="post" action="{% url 'logout' %}" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" style="background: none; border: none; padding: 0; cursor: pointer; color: inherit; font: inherit;">
+            Выйти
+          </button>
+        </form>
       {% else %}
-        <a href="{% url "login" %}">Log-in</a>
+        <a href="{% url "login" %}">Войти</a>
       {% endif %}
     </span>
     </div>
     <div id="content">
-        {% block content%}
+        {% block content %}
         {% endblock %}
     </div>
 </body>
