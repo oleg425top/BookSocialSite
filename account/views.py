@@ -1,9 +1,11 @@
 from django.contrib.auth.views import LogoutView, LoginView
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
-from account.forms import LoginForm, UserRegistrationForm
+from account.forms import LoginForm, UserRegistrationForm, UserEditionForm, ProfileEditionForm
+from account.models import Profile
+
 
 @login_required
 def dashboard(request):
@@ -41,7 +43,7 @@ def register(request):
             new_user = user_form.save(commit=False)
             new_user.set_password(user_form.cleaned_data['password'])  # Исправлено: password
             new_user.save()
-
+            Profile.objects.create(user=new_user)
             context = {
                 'new_user': new_user,
                 'title': f'Добро пожаловать {new_user.first_name}'  # Исправлено: убрана лишняя буква
@@ -55,3 +57,23 @@ def register(request):
         'title': 'Регистрация'  # Исправлено: убрана лишняя буква
     }
     return render(request, 'account/registration/register.html', context)
+
+@login_required
+def edit(request):
+    if request.method == 'POST':
+        user_form = UserEditionForm(instance=request.user, data=request.POST)
+        profile_form = ProfileEditionForm(instance=request.user.profile,
+                                          data=request.POST,
+                                          files=request.FILES)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+    else:
+        user_form = UserEditionForm(instance=request.user)
+        profile_form = ProfileEditionForm(instance=request.user.profile)
+    context = {
+        'title':'Редактировать: ',
+        'user_form':user_form,
+        'profile_form':profile_form
+    }
+    return render(request, 'account/edit.html', context=context)
